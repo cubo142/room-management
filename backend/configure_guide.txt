@@ -1,0 +1,4 @@
+package:
+node-ts: node can't execute .ts file so this package help execute typescript 
+eslint
+nodemon: reset server automatically
