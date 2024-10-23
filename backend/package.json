@@ -13,6 +13,8 @@
   "devDependencies": {
     "@eslint/js": "^9.11.1",
     "@types/express": "^5.0.0",
+    "@types/http-errors": "^2.0.4",
+    "@types/morgan": "^1.9.9",
     "eslint": "^9.11.1",
     "globals": "^15.10.0",
     "nodemon": "^3.1.7",
@@ -23,6 +25,11 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",
-    "express": "^4.21.0"
+    "dotenv": "^16.4.5",
+    "envalid": "^8.0.0",
+    "express": "^4.21.0",
+    "http-errors": "^2.0.0",
+    "mongoose": "^8.7.1",
+    "morgan": "^1.10.0"
   }
 }
