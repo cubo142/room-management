@@ -1,6 +1,6 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 
-// This object will get generated automatically every dueTime date
+// This object will get generated automatically every dueTime date (of last month)
 // User need to edit this manually
 const payCheckSchema = new Schema(
   {
@@ -10,11 +10,15 @@ const payCheckSchema = new Schema(
     },
     electricUsage: { type: Number }, //manually - electricUsage: use this field to calculate accumulated electricPrice | tính dựa trên lượng điện tiêu thụ tháng này (điện tiêu thụ = số điện tháng này - tháng trước) ghi trên máy điện mỗi phòng
     waterUsage: { type: Number }, //manually
-    isOverdue: { type: Boolean, default: false }, //auto - based on paymentDate. false: pay in duetime || true: haven't pay in due time
-    amountPaid: { type: Number }, //manually - actual amount the rentor paid that month, could possibly pay for any others month
     finalCharge: { type: Number }, //auto - finalCharge = (electricUsage * electricPrice) + (waterUsage * waterPrice) + rentPrice
-    paymentDate: { type: Date }, //manually - rentor might be overdue and paid other times (could leave empty)
-    isPay: { type: Boolean, default: false },
+    payList: [
+      //manually - added because rentor could pay manytimes within a month
+      {
+        paymentDate: { type: Date }, //manually 
+        amountPaid: { type: Number }, //manually - actual amount the rentor paid for that month, could possibly pay for any others month
+        note: { type: String },
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -26,5 +30,10 @@ type PayCheck = InferSchemaType<typeof payCheckSchema>;
 export default model<PayCheck>("PayCheck", payCheckSchema);
 
 //Issue:
-//Rentor might not be able to paid in correct date => paymentDate could have different date other than correct date within that month
-//paymentDate could be leave empty
+//****Rentor might not be able to paid in that month
+//payList could possibly be empty that month => amountPaid = 0
+
+//****There could be rentor pay for extra month so user might want to manually write it in the note. 
+//Ex: month 1 = 5000k, rentor pay = 10000k (for last month and this month)
+// => month 1 amountLeft = finalCharge - amountPaid <=> amountLeft = 5000k - 10000k = -5000k
+// => month 2 amountLeft = finalCharge - amountPaid <=> amountLeft = 5000k - -5000k =  0k

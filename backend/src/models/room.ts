@@ -9,7 +9,7 @@ const roomSchema = new Schema(
     waterPrice: { type: Number }, // the same as electricPrice
     dueTime: { type: Date }, //automatically change every months
     isRent: { type: Boolean, default: false },
-    amountLeft: { type: Number }, //amountLeft accumulated every month that finalCharge was not payup. amoutnLeft = amountPaid(of every month)
+    amountLeft: { type: Number }, //monthAmountLeft = finalCharge(everymonth) - amountPaid(everymonth)
     paymentHistory: [
       //auto generate every dueTime
       {
