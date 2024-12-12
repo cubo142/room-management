@@ -1,8 +1,12 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import notesRoutes from "./routes/notes";
+import roomRoutes from "./routes/roomRoute";
+import paycheckRoutes from "./routes/paycheckRoute";
+import peopleRoutes from "./routes/peopleRoute";
 import morgan from "morgan";
 import createHttpError, { isHttpError } from "http-errors";
+// import people from "./models/people";
 
 const app = express();
 
@@ -12,6 +16,9 @@ app.use(express.json()); //express.json() analyze JSON help server accept JSON b
 
 //***************ROUTES******************/
 app.use("/api/notes", notesRoutes);
+app.use("/api/rooms",roomRoutes);
+app.use("/api/paychecks",paycheckRoutes);
+app.use("/api/peoples",peopleRoutes);
 //***************************************/
 
 //***************ERROR HANDLER***************** */

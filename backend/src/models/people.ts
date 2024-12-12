@@ -15,6 +15,6 @@ const peopleSchema = new Schema(
 
 //InferSchemaType help TypeScript indicate or understand the type of an Object base on Mongoose's Schema
 //In other word: create a type for TypeScript to understand
-type People = InferSchemaType<typeof peopleSchema>;
+export type People = InferSchemaType<typeof peopleSchema>;
 
 export default model<People>("People", peopleSchema);
