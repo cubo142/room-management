@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import RoomModel from "../models/room";
 import createHttpError from "http-errors";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
 export const getRooms: RequestHandler = async (req, res, next) => {
   try {
@@ -24,7 +24,7 @@ export const getRoom: RequestHandler = async (req, res, next) => {
 
     const room = await RoomModel.findById(roomId)
       .populate("paycheck")
-      .populate("people")
+      // .populate("people")
       .exec();
 
     if (!room) {
@@ -112,6 +112,7 @@ interface UpdateRoomBody {
   isRent: boolean;
   amountLeft?: number;
   note?: string;
+  paycheck:[ObjectId];
 }
 
 export const updateRoom: RequestHandler<
@@ -130,6 +131,7 @@ export const updateRoom: RequestHandler<
   const newIsRent = req.body.isRent;
   const newAmountLeft = req.body.amountLeft;
   const newNote = req.body.note;
+  const newPaycheck = req.body.paycheck;
 
   try {
     if (!mongoose.isValidObjectId(roomId)) {
@@ -155,6 +157,9 @@ export const updateRoom: RequestHandler<
     room.isRent = newIsRent;
     room.amountLeft = newAmountLeft;
     room.note = newNote;
+
+    //update paycheck
+    room.set('paycheck',newPaycheck);
 
     const updatedRoom = await room.save(); //save changes
     //RoomModel.findByIdAndUpdate(room): this is a viable option to save changes but it will fetch the data again

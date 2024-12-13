@@ -4,7 +4,7 @@ const peopleSchema = new Schema(
   {
     name: { type: String, required: true },
     dateOfBirth: { type: String },
-    identityNumber: { type: Number },
+    identityNumber: { type: String },
     currentRoom: {
       type: Schema.Types.ObjectId,
       ref: "Room",

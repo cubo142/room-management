@@ -1,17 +1,17 @@
 import express from "express";
-import * as NotesController from "../controllers/notes";
+import * as PeopleController from "../controllers/peopleController";
 
 //Router() is a complete middleware mountable route handlers
 const router = express.Router();
 
-router.get("/", NotesController.getNotes);
+router.get("/", PeopleController.getPeoples);
 
-router.get("/:noteId",NotesController.getNote);
+router.get("/:peopleId",PeopleController.getPeople);
 
-router.post("/",NotesController.createNote);
+router.post("/",PeopleController.createPeople);
 
-router.patch("/:noteId",NotesController.updateNote);
+router.patch("/:peopleId",PeopleController.updatePeople);
 
-router.delete("/:noteId",NotesController.deleteNote);
+router.delete("/:peopleId",PeopleController.deletePeople);
 
 export default router;

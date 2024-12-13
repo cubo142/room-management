@@ -1,8 +1,43 @@
 import { RequestHandler } from "express";
 import PaycheckModel from "../models/paycheck";
+import RoomModel from "../models/room";
 import createHttpError from "http-errors";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 
+//**************Interface for Create Method**************//
+interface CreatePaycheckBody {
+  room?: mongoose.Types.ObjectId;
+  electricUsage?: number;
+  waterUsage?: number;
+  finalCharge?: number;
+  payList: [
+    {
+      paymentDate: Date;
+      amountPaid: number;
+      note: string;
+    }
+  ];
+}
+
+//**************Interface for Update Method*************//
+interface UpdatePaycheckParams {
+  paycheckId: string;
+}
+
+interface UpdatePaycheckBody {
+  electricUsage?: number;
+  waterUsage?: number;
+  finalCharge?: number;
+  payList: [
+    {
+      paymentDate: Date;
+      amountPaid: number;
+      note: string;
+    }
+  ];
+}
+
+//****************Get All Data****************//
 export const getPaychecks: RequestHandler = async (req, res, next) => {
   try {
     const paychecks = await PaycheckModel.find().exec();
@@ -13,6 +48,7 @@ export const getPaychecks: RequestHandler = async (req, res, next) => {
   }
 };
 
+//****************Ger Data by ID****************//
 export const getPaycheck: RequestHandler = async (req, res, next) => {
   const paycheckId = req.params.paycheckId;
 
@@ -34,20 +70,7 @@ export const getPaycheck: RequestHandler = async (req, res, next) => {
   }
 };
 
-interface CreatePaycheckBody {
-  room?: ObjectId;
-  electricUsage?: number;
-  waterUsage?: number;
-  finalCharge?: number;
-  payList: [
-    {
-      paymentDate: Date;
-      amountPaid: number;
-      note: string;
-    }
-  ];
-}
-
+//****************Create Data****************//
 //RequestHandler<P = ParamsDictionary, ResBody = any, ReqBody = any, ReqQuery = Query>
 //Here indicate the type of ReqBody which is object CreatePaycheckBody
 export const createPaycheck: RequestHandler<
@@ -56,25 +79,35 @@ export const createPaycheck: RequestHandler<
   CreatePaycheckBody,
   unknown
 > = async (req, res, next) => {
-  const room = req.body.room;
+  const roomID = req.body.room;
   const electricUsage = req.body.electricUsage;
   const waterUsage = req.body.waterUsage;
   const finalCharge = req.body.finalCharge;
   const payList = req.body.payList;
 
   try {
-    // if (!title) {
-    //   throw createHttpError(400, "Paycheck must have a title");
-    // }
+    if (!mongoose.isValidObjectId(roomID)) {
+      throw createHttpError(400, "Invalid room ID");
+    }
 
-    //  "create()" method create and save new object to mongoDB base on provided model
+    //Check if room exist
+    const room = await RoomModel.findById(roomID);
+    if (!room) {
+      throw createHttpError(404, "Room not found");
+    }
+
+    //Create I store new data
     const newPaycheck = await PaycheckModel.create({
-      room: room,
+      room: roomID,
       electricUsage: electricUsage,
       waterUsage: waterUsage,
       finalCharge: finalCharge,
       payList: payList,
     });
+
+    //Take the paycheckID just already created & push it back to room's paycheck references (this update both room ref and paycheck ref)
+    room.paycheck.push(newPaycheck._id);
+    await room.save();
 
     res.status(201).json(newPaycheck);
   } catch (error) {
@@ -82,24 +115,8 @@ export const createPaycheck: RequestHandler<
   }
 };
 
+//****************Update/Delete Data****************//
 //PUT | PATCH method need to check params,body,req,res while GET method get params from URL. So we need to define type for params for correct paycheckId type
-interface UpdatePaycheckParams {
-  paycheckId: string;
-}
-
-interface UpdatePaycheckBody {
-  electricUsage?: number;
-  waterUsage?: number;
-  finalCharge?: number;
-  payList: [
-    {
-      paymentDate: Date;
-      amountPaid: number;
-      note: string;
-    }
-  ];
-}
-
 export const updatePaycheck: RequestHandler<
   UpdatePaycheckParams,
   unknown,
@@ -117,10 +134,6 @@ export const updatePaycheck: RequestHandler<
       throw createHttpError(400, "Invalid paycheck ID");
     }
 
-    // if (!newTitle) {
-    //   throw createHttpError(400, "Paycheck must have a title");
-    // }
-
     const paycheck = await PaycheckModel.findById(paycheckId).exec(); //fetch the data by ID
 
     if (!paycheck) {
@@ -132,9 +145,9 @@ export const updatePaycheck: RequestHandler<
     paycheck.finalCharge = newFinalCharge;
 
     // Update or add to payList
-    paycheck.set('payList', newPayList);
+    paycheck.set("payList", newPayList);
 
-    const updatedPaycheck = await paycheck.save(); //save changes
+    const updatedPaycheck = await paycheck.save();
     //PaycheckModel.findByIdAndUpdate(paycheck): this is a viable option to save changes but it will fetch the data again
 
     res.status(200).json(updatedPaycheck);
@@ -143,6 +156,7 @@ export const updatePaycheck: RequestHandler<
   }
 };
 
+//****************Delete Data****************//
 export const deletePaycheck: RequestHandler = async (req, res, next) => {
   const paycheckId = req.params.paycheckId;
   try {
