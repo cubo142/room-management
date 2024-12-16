@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import RoomModel from "../models/room";
 import createHttpError from "http-errors";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 
 export const getRooms: RequestHandler = async (req, res, next) => {
   try {
@@ -40,10 +40,10 @@ export const getRoom: RequestHandler = async (req, res, next) => {
 interface CreateRoomBody {
   roomName: string;
   rentPrice: number;
-  rentDate: Date;
+  rentDate: string;
   electricPrice: number;
   waterPrice: number;
-  dueTime: Date;
+  dueTime: string;
   isRent: boolean;
   amountLeft: number;
   paycheck: string[];
@@ -105,14 +105,14 @@ interface UpdateRoomParams {
 interface UpdateRoomBody {
   roomName?: string;
   rentPrice?: number;
-  rentDate?: Date;
+  rentDate?: string;
   electricPrice?: number;
   waterPrice?: number;
-  dueTime?: Date;
+  dueTime?: string;
   isRent: boolean;
   amountLeft?: number;
   note?: string;
-  paycheck:[ObjectId];
+  paycheck:[string];
 }
 
 export const updateRoom: RequestHandler<

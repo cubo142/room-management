@@ -14,7 +14,7 @@ const payCheckSchema = new Schema(
     payList: [
       //manually - added because rentor could pay manytimes within a month
       {
-        paymentDate: { type: Date }, //manually
+        paymentDate: { type: String }, //manually
         amountPaid: { type: Number }, //manually - actual amount the rentor paid for that month, could possibly pay for any others month
         note: { type: String },
       },

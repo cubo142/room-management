@@ -4,10 +4,10 @@ const roomSchema = new Schema(
   {
     roomName: { type: String, required: true },
     rentPrice: { type: Number },
-    rentDate: { type: Date },
+    rentDate: { type: String },
     electricPrice: { type: Number }, // rule: ?VND/1KW - ex: 3.000 VND/1KW
     waterPrice: { type: Number }, // the same as electricPrice
-    dueTime: { type: Date }, //automatically change every months
+    dueTime: { type: String }, //automatically change every months
     isRent: { type: Boolean, default: false },
     amountLeft: { type: Number }, //accumulate every dueTime. monthAmountLeft = finalCharge(everymonth) - amountPaid(everymonth)
     paycheck: [

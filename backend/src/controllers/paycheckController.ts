@@ -12,7 +12,7 @@ interface CreatePaycheckBody {
   finalCharge?: number;
   payList: [
     {
-      paymentDate: Date;
+      paymentDate: string;
       amountPaid: number;
       note: string;
     }
@@ -30,7 +30,7 @@ interface UpdatePaycheckBody {
   finalCharge?: number;
   payList: [
     {
-      paymentDate: Date;
+      paymentDate: string;
       amountPaid: number;
       note: string;
     }
